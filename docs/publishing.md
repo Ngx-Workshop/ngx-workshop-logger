@@ -10,8 +10,8 @@ CHANGELOG.md, release PRs, and GitHub release tags through
 1. An Ngx-Workshop organization owner must enable **Allow GitHub Actions to create
    and approve pull requests** in organization Settings → Actions → General.
    Then enable the same option in this repository's Settings → Actions → General.
-   The organization currently blocks it (the repository API returned HTTP 409 on
-   2026-10-24). The workflow explicitly requests its required write permissions;
+   If the repository option cannot be enabled, check the organization policy first
+   (the repository API returned HTTP 409 on 2026-10-24). The workflow explicitly requests its required write permissions;
    the default workflow token can stay read-only. No personal access token is needed.
 2. Keep the npm trusted publisher for `@tmdjr/ngx-workshop-logger` configured as:
    owner `Ngx-Workshop`, repository `ngx-workshop-logger`, workflow `publish.yml`,

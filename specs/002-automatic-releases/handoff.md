@@ -24,7 +24,7 @@ tag and validates tag/version/main ancestry.
 | npm run check | PASS: 24 tests, library and demo production builds |
 | npm run pack | PASS: existing 0.0.1 tarball, not published |
 | AC-001 version updates | Release Please 17.6.0 actual Node strategy with local-file GitHub substitute: fix 0.0.2, feat 0.1.0, breaking 1.0.0; root/lock/library synchronized; changelog generated; docs-only skipped |
-| AC-002–004 live automation | NOT RUN: changes local; no release PR or publish attempted |
+| AC-002–004 live automation | PENDING: configuration run succeeded but skipped PR creation because Update deployment is not a Conventional Commit |
 | Repository PR permission API | BLOCKED: HTTP 409, organization prohibits Actions PR creation |
 
 The strategy check used local input and did not exercise GitHub PR creation or
@@ -42,7 +42,10 @@ X002: Commit and push these local changes to main with
 `fix(ci): automate versioned npm releases`. Wait for the automatic release PR
 and its dispatched CI, review/merge, then verify the GitHub release and npm
 version. Keep npm owner/repo/workflow as Ngx-Workshop / ngx-workshop-logger /
-publish.yml with no environment. Nothing was committed, pushed, or published.
+publish.yml with no environment. Configuration is already on main as abc5876 (Update deployment). Run
+40065250302 succeeded but proposed no release because that message is not a
+Conventional Commit. A follow-up fix(ci) commit initializes the first release PR;
+publication still awaits its merge.
 
 ## Context maintenance
 
