@@ -14,3 +14,17 @@ npm run pack rebuilds and writes the distributable tarball into the workspace ro
 No external service, account, browser, or sibling repository is required for local
 builds/tests. npm registry access is needed for installation. Node 22.12+ or 24+
 is required by Angular; workflows use the current Node 22 release.
+
+
+## Logger verification
+
+`projects/ngx-workshop-logger/src/lib/workshop-logger.service.spec.ts` checks all
+three severities, exact console arguments, literal format tokens, data-only/falsy
+payloads, circular objects, plain output, DI defaults, target overrides, threshold
+filtering, mock acknowledgement, and backend failure propagation. These are local
+unit checks; they do not verify an external backend or actual inspector rendering.
+
+To inspect manually, run `npm start`, open the browser inspector console, and use
+each severity button. Select Mock backend to see an explicit mock acknowledgement;
+select Both to see console output and acknowledgement. Expand the console object
+and verify header colors. No network request is expected.

@@ -1,16 +1,18 @@
 # Architecture
 
-One Angular workspace contains one independently publishable library and its demo
-consumer. The root package is private. ng-packagr generates Angular Package Format
-output from the explicit public-api.ts entry point, with partial compilation for
-consumers to link. Angular dependencies are peers; tslib is a runtime dependency.
+The private workspace builds `@tmdjr/ngx-workshop-logger` and a standalone demo.
+ng-packagr produces Angular Package Format output with partial compilation.
+The demo imports the built package from dist to verify the public boundary.
 
-LibraryCard demonstrates a standalone OnPush component with a typed signal input,
-content projection, accessible labeling and scoped inline styles. Its test verifies
-changes to the public input. The demo imports the scoped package from dist/, not
-private source files, so its production build verifies the package's public boundary.
+`src/lib/logger.types.ts` defines the event and transport contracts.
+`logger.providers.ts` owns application configuration and injectable mock backend.
+`workshop-logger.service.ts` creates one timestamped event, filters severity, then
+routes to the console, backend, or both. Console CSS colors style the header;
+message and inspectable data appear below it. No JSON serialization is required,
+so circular objects and Error instances can be inspected in the console.
 
-Keep reusable domain logic and components in the library; demo-only composition
-belongs in the demo. Do not assume a particular shell, backend, global theme,
-Material installation or service contract. Introduce and document those integrations
-only when the library needs them.
+The backend receives the same in-memory entry and returns an asynchronous mock
+receipt without network or storage. Consumers may override LOG_BACKEND_TRANSPORT
+with a real transport once a backend contract exists. Rejections propagate to callers.
+Independent Angular roots have independent configuration. No existing MFE/shell
+is modified or assumed to share an injector. Consumers own data redaction.

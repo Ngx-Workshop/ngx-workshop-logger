@@ -2,7 +2,7 @@
   "name": "ngx-workshop-logger",
   "version": "0.0.0",
   "private": true,
-  "description": "Ngx-Workshop Angular library workspace and demo",
+  "description": "Shared Angular logging for Ngx-Workshop shells and microfrontends",
   "license": "Apache-2.0",
   "engines": {
     "node": "^22.12.0 || >=24.0.0"
