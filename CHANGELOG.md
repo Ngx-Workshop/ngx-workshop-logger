@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/Ngx-Workshop/ngx-workshop-logger/compare/v0.2.0...v0.3.0) (2026-10-24)
+
+
+### Features
+
+* More compositional updates ([a376d9f](https://github.com/Ngx-Workshop/ngx-workshop-logger/commit/a376d9ffa1126406ceaa0be44f9a082a47a128b3))
+
 ## [0.2.0](https://github.com/Ngx-Workshop/ngx-workshop-logger/compare/v0.1.0...v0.2.0) (2026-10-24)
 
 
