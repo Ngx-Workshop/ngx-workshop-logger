@@ -3,21 +3,34 @@
 Shared Angular 21 logging for shells and microfrontends. Requires Angular core/common ^21.2.25.
 
 ```ts
-import { inject } from '@angular/core';
-import { bootstrapApplication } from '@angular/platform-browser';
-import { WorkshopLogger, provideWorkshopLogger } from '@tmdjr/ngx-workshop-logger';
+import { inject } from "@angular/core";
+import { bootstrapApplication } from "@angular/platform-browser";
+import {
+  WorkshopLogger,
+  provideWorkshopLogger,
+} from "@tmdjr/ngx-workshop-logger";
 
 // In your application's bootstrap configuration:
 bootstrapApplication(App, {
-  providers: [provideWorkshopLogger({ target: 'console', color: true, minLevel: 'info' })],
+  providers: [
+    provideWorkshopLogger({ target: "console", color: true, minLevel: "info" }),
+  ],
 });
 
 // In a component or service injection context:
 const logger = inject(WorkshopLogger);
-await logger.info('WorkshopJourney', { message: 'Journey opened', data: { step: 1 } });
-await logger.warning('WorkshopJourney', { message: 'Retrying' });
-await logger.error('WorkshopJourney', { data: new Error('Example') }, 'both');
-const receipt = await logger.log('info', 'WorkshopJourney', { message: 'Saved' }, 'backend');
+await logger.info("WorkshopJourney", {
+  message: "Journey opened",
+  data: { step: 1 },
+});
+await logger.warning("WorkshopJourney", { message: "Retrying" });
+await logger.error("WorkshopJourney", { data: new Error("Example") }, "both");
+const receipt = await logger.log(
+  "info",
+  "WorkshopJourney",
+  { message: "Saved" },
+  "backend",
+);
 // receipt: { mocked: true, accepted: true }; no HTTP request or persistence.
 ```
 

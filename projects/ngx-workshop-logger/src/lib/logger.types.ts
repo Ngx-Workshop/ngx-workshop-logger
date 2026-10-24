@@ -1,5 +1,5 @@
-export type LogLevel = 'info' | 'warning' | 'error';
-export type LogTarget = 'console' | 'backend' | 'both';
+export type LogLevel = "info" | "warning" | "error";
+export type LogTarget = "console" | "backend" | "both";
 export type LogContent =
   | { readonly message: string; readonly data?: unknown }
   | { readonly message?: never; readonly data: unknown };
