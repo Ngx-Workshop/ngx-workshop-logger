@@ -44,7 +44,7 @@ export class WorkshopLogger {
 | |/ |/ / /_/ / /  / ,< (__  ) / / / /_/ / /_/ /
 |__/|__/\____/_/  /_/|_/____/_/ /_/\____/ .___/
                                        /_/
-%c  [ Made with <3 TMDJR ]
+%c  [ Made with <3 ]
 `,
       cyanStyle,
       purpleStyle,
