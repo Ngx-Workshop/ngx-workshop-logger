@@ -54,7 +54,7 @@ describe("WorkshopLogger", () => {
   });
 
   it.each([
-    ["info", "#00f5ff"],
+    ["info", "#22d3ee"],
     ["warning", "#fff01f"],
     ["error", "#ff2a6d"],
   ] as const)(
@@ -66,12 +66,20 @@ describe("WorkshopLogger", () => {
       const data = { nested: { step: 1 } };
       await setup().log(level, "Journey%c", { message: "Loaded %c %s", data });
       expect(console.groupCollapsed).toHaveBeenCalledWith(
-        "%c%s%c\n%c%s: %s%c",
-        `color: ${color}; font-size: 10px; font-weight: normal; padding: 4px 8px; text-shadow: 0 0 4px ${color}, 0 0 8px ${color}`,
+        "%c%s%c\n%c%s%c%c%s%c%c%s%c: %c%s%c",
+        `color: ${color}; font-size: 10px; font-weight: normal; padding: 4px 8px; text-shadow: 0 0 4px ${color}, 0 0 8px ${color};`,
         `[${level.toUpperCase()}] || [12:00:00]`,
         "",
-        `color: ${color}; font-size: 10px; font-weight: normal; padding: 0 4px 0 8px;`,
-        "[Journey%c]",
+        `color: ${color}; font-size: 10px; font-weight: normal; padding-left: 8px;`,
+        "[",
+        "",
+        "color: #ff2d95; font-size: 10px; font-weight: normal;",
+        "Journey%c",
+        "",
+        `color: ${color}; font-size: 10px; font-weight: normal;`,
+        "]",
+        "",
+        "color: #c084fc; font-size: 10px; font-weight: normal;",
         "Loaded %c %s",
         "",
       );
@@ -93,12 +101,20 @@ describe("WorkshopLogger", () => {
       message: "Started",
     });
     expect(console.log).toHaveBeenCalledWith(
-      "%c%s%c\n%c%s: %s%c",
+      "%c%s%c\n%c%s%c%c%s%c%c%s%c: %c%s%c",
       expect.any(String),
       expect.any(String),
       "",
-      "color: #00f5ff; font-size: 10px; font-weight: normal; padding: 0 4px 0 8px;",
-      "[Journey]",
+      "color: #22d3ee; font-size: 10px; font-weight: normal; padding-left: 8px;",
+      "[",
+      "",
+      "color: #ff2d95; font-size: 10px; font-weight: normal;",
+      "Journey",
+      "",
+      "color: #22d3ee; font-size: 10px; font-weight: normal;",
+      "]",
+      "",
+      "color: #c084fc; font-size: 10px; font-weight: normal;",
       "Started",
       "",
     );
@@ -122,12 +138,18 @@ describe("WorkshopLogger", () => {
     async (data) => {
       await setup().info("Journey", { data });
       expect(console.groupCollapsed).toHaveBeenCalledWith(
-        "%c%s%c\n%c%s%c",
+        "%c%s%c\n%c%s%c%c%s%c%c%s%c",
         expect.any(String),
         expect.stringMatching(/^\[INFO\] \|\| \[\d{2}:\d{2}:\d{2}\]$/),
         "",
-        "color: #00f5ff; font-size: 10px; font-weight: normal; padding: 0 4px 0 8px;",
-        "[Journey]",
+        "color: #22d3ee; font-size: 10px; font-weight: normal; padding-left: 8px;",
+        "[",
+        "",
+        "color: #ff2d95; font-size: 10px; font-weight: normal;",
+        "Journey",
+        "",
+        "color: #22d3ee; font-size: 10px; font-weight: normal;",
+        "]",
         "",
       );
       expect(console.table).toHaveBeenCalledExactlyOnceWith(data);
@@ -165,12 +187,20 @@ describe("WorkshopLogger", () => {
     await setup().warning("Journey", { message: "Retry", data }, "both");
     const entry = send.mock.calls[0]![0];
     expect(console.groupCollapsed).toHaveBeenCalledWith(
-      "%c%s%c\n%c%s: %s%c",
+      "%c%s%c\n%c%s%c%c%s%c%c%s%c: %c%s%c",
       expect.any(String),
       `[WARNING] || [${entry.timestamp}]`,
       "",
-      "color: #fff01f; font-size: 10px; font-weight: normal; padding: 0 4px 0 8px;",
-      "[Journey]",
+      "color: #fff01f; font-size: 10px; font-weight: normal; padding-left: 8px;",
+      "[",
+      "",
+      "color: #ff2d95; font-size: 10px; font-weight: normal;",
+      "Journey",
+      "",
+      "color: #fff01f; font-size: 10px; font-weight: normal;",
+      "]",
+      "",
+      "color: #c084fc; font-size: 10px; font-weight: normal;",
       "Retry",
       "",
     );

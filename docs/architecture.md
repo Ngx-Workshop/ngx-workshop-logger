@@ -6,15 +6,18 @@ The demo imports the built package from dist to verify the public boundary.
 
 `src/lib/logger.types.ts` defines the event and transport contracts.
 `logger.providers.ts` owns application configuration and injectable mock backend.
-`workshop-logger.service.ts` creates one timestamped event, filters severity, then
-routes to the console, backend, or both. UTC timestamps use `HH:MM:SS` on the first
-line beside severity; origin and message share the second line. Only the first line
-receives the synthwave neon glow; the second line uses the same severity color in
-a separate CSS segment without text shadow. Message-only entries use `console.log`.
-Entries with data use a collapsed group and pass the original data to
-`console.table`; the browser controls native table rendering. No JSON serialization
-is required, so circular objects and Error instances remain available to the native
-console renderer.
+`logger.console.ts` owns the internal declarative banner/log theme, CSS generation,
+and safe composable console fragments. It is intentionally not part of the public
+API. `workshop-logger.service.ts` creates one timestamped event, filters severity,
+then routes to the console, backend, or both.
+
+Severity and UTC `HH:MM:SS` share the first line; origin and message share the second
+line. The first line receives the synthwave neon glow. On the second line, separate
+CSS segments color the brackets by severity, the origin pink, and the message
+purple. Message-only entries use `console.log`. Entries with data use a collapsed
+group and pass the original data to `console.table`; the browser controls native
+table rendering. No JSON serialization is required, so circular objects and Error
+instances remain available to the native console renderer.
 
 The backend receives the same in-memory entry and returns an asynchronous mock
 receipt without network or storage. Consumers may override LOG_BACKEND_TRANSPORT

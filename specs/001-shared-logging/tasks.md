@@ -22,3 +22,9 @@
   (FR-002/003, AC-001); depends on T009.
 - [x] T011: Apply the first line's severity color to the origin/message line without
   applying its glow; update tests and documentation (FR-003, AC-001); depends on T010.
+- [x] T012: Split the second line into severity-colored brackets, a pink origin,
+  and a purple message while preserving literal format tokens; update tests and
+  documentation (FR-003, AC-001); depends on T011.
+- [x] T013: Extract banner and log presentation into an internal declarative theme,
+  CSS generator, and composable safe fragments without changing the public API;
+  update tests and documentation; depends on T012.

@@ -34,19 +34,20 @@ const receipt = await logger.log(
 // receipt: { mocked: true, accepted: true }; no HTTP request or persistence.
 ```
 
-Console output (blue info, amber warning, red error headers):
+Console output uses a neon severity heading, severity-colored brackets, a pink
+origin, and a purple message:
 
 ```text
-[2026-10-23T12:00:00.000Z] :: [INFO] :: [WorkshopJourney]
-Journey opened
-{ step: 1 }
+[INFO] || [12:00:00]
+[WorkshopJourney]: Journey opened
 ```
 
-Data stays inspectable in the browser console. Supply a message, data, or both;
-empty origin names reject the returned promise. CSS color targets browser inspectors.
-Set `color: false` for plain output. `minLevel: 'warning'` filters info for all
-destinations; `minLevel: 'error'` filters info and warning. Per-call targets override
-the configured target. Console-only and filtered calls resolve to undefined.
+Entries with data use a collapsed console group and `console.table`, so the original
+value remains inspectable. Supply a message, data, or both; empty origin names reject
+the returned promise. CSS color targets browser inspectors. Set `color: false` for
+plain output. `minLevel: 'warning'` filters info for all destinations;
+`minLevel: 'error'` filters info and warning. Per-call targets override the configured
+target. Console-only and filtered calls resolve to undefined.
 
 Await logging calls and handle failures from a custom backend transport. Console
 output occurs immediately; if both targets are selected, it precedes backend delivery.
