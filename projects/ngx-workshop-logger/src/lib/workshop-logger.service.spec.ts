@@ -23,6 +23,10 @@ describe("WorkshopLogger", () => {
 
   beforeEach(() => {
     send.mockReset().mockResolvedValue({ mocked: true, accepted: true });
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    vi.spyOn(console, "groupCollapsed").mockImplementation(() => {});
+    vi.spyOn(console, "table").mockImplementation(() => {});
+    vi.spyOn(console, "groupEnd").mockImplementation(() => {});
     vi.spyOn(console, "info").mockImplementation(() => {});
     vi.spyOn(console, "warn").mockImplementation(() => {});
     vi.spyOn(console, "error").mockImplementation(() => {});
@@ -32,25 +36,33 @@ describe("WorkshopLogger", () => {
   });
 
   it.each([
-    ["info", "info", "#0284c7"],
-    ["warning", "warn", "#b45309"],
-    ["error", "error", "#dc2626"],
+    ["info", "#00f5ff"],
+    ["warning", "#fff01f"],
+    ["error", "#ff2a6d"],
   ] as const)(
-    "formats %s with its severity method and color",
-    async (level, method, color) => {
+    "formats %s as a synthwave group with tabular data",
+    async (level, color) => {
       vi.spyOn(Date.prototype, "toISOString").mockReturnValue(
         "2026-10-23T12:00:00.000Z",
       );
       const data = { nested: { step: 1 } };
       await setup().log(level, "Journey%c", { message: "Loaded %c %s", data });
-      expect(console[method]).toHaveBeenCalledWith(
-        "%c%s%c\n%s\n%o",
-        `color: ${color}; font-weight: bold`,
-        `[2026-10-23T12:00:00.000Z] :: [${level.toUpperCase()}] :: [Journey%c]`,
+      expect(console.groupCollapsed).toHaveBeenCalledWith(
+        "%c%s%c\n%c%s: %s%c",
+        `color: ${color}; font-size: 12px; font-weight: normal; padding: 4px 8px; text-shadow: 0 0 4px ${color}, 0 0 8px ${color}`,
+        `[12:00:00] :: [${level.toUpperCase()}]`,
         "",
+        `color: ${color}`,
+        "[Journey%c]",
         "Loaded %c %s",
-        data,
+        "",
       );
+      expect(console.table).toHaveBeenCalledExactlyOnceWith(data);
+      expect(console.groupEnd).toHaveBeenCalledOnce();
+      expect(console.log).not.toHaveBeenCalled();
+      expect(console.info).not.toHaveBeenCalled();
+      expect(console.warn).not.toHaveBeenCalled();
+      expect(console.error).not.toHaveBeenCalled();
       expect(send).not.toHaveBeenCalled();
     },
   );
@@ -60,12 +72,15 @@ describe("WorkshopLogger", () => {
     await TestBed.inject(WorkshopLogger).info("Journey", {
       message: "Started",
     });
-    expect(console.info).toHaveBeenCalledWith(
-      "%c%s%c\n%s",
+    expect(console.log).toHaveBeenCalledWith(
+      "%c%s%c\n%c%s: %s%c",
       expect.any(String),
       expect.any(String),
       "",
+      "color: #00f5ff",
+      "[Journey]",
       "Started",
+      "",
     );
     expect(TestBed.inject(LOG_BACKEND_TRANSPORT)).toBeInstanceOf(
       MockLogBackendTransport,
@@ -74,9 +89,10 @@ describe("WorkshopLogger", () => {
 
   it("supports plain message-only output", async () => {
     await setup({ color: false }).warning("Journey", { message: "Retry" });
-    expect(console.warn).toHaveBeenCalledWith(
-      "%s\n%s",
-      expect.stringContaining("[WARNING] :: [Journey]"),
+    expect(console.log).toHaveBeenCalledWith(
+      "%s\n%s: %s",
+      expect.stringMatching(/^\[\d{2}:\d{2}:\d{2}\] :: \[WARNING\]$/),
+      "[Journey]",
       "Retry",
     );
   });
@@ -85,13 +101,17 @@ describe("WorkshopLogger", () => {
     "preserves data-only payload %s",
     async (data) => {
       await setup().info("Journey", { data });
-      expect(console.info).toHaveBeenCalledWith(
-        "%c%s%c\n%o",
+      expect(console.groupCollapsed).toHaveBeenCalledWith(
+        "%c%s%c\n%c%s%c",
         expect.any(String),
-        expect.any(String),
+        expect.stringMatching(/^\[\d{2}:\d{2}:\d{2}\] :: \[INFO\]$/),
         "",
-        data,
+        "color: #00f5ff",
+        "[Journey]",
+        "",
       );
+      expect(console.table).toHaveBeenCalledExactlyOnceWith(data);
+      expect(console.groupEnd).toHaveBeenCalledOnce();
     },
   );
 
@@ -101,7 +121,7 @@ describe("WorkshopLogger", () => {
     };
     data.self = data;
     await setup().error("Journey", { message: "Failure", data });
-    expect(vi.mocked(console.error).mock.calls[0]?.at(-1)).toBe(data);
+    expect(console.table).toHaveBeenCalledExactlyOnceWith(data);
   });
 
   it("routes backend-only events without console output", async () => {
@@ -115,21 +135,26 @@ describe("WorkshopLogger", () => {
       origin: "Journey",
       data: { step: 1 },
     });
-    expect(console.info).not.toHaveBeenCalled();
+    expect(console.log).not.toHaveBeenCalled();
+    expect(console.groupCollapsed).not.toHaveBeenCalled();
+    expect(console.table).not.toHaveBeenCalled();
   });
 
   it("sends the same timestamp and data to both destinations", async () => {
     const data = { step: 1 };
     await setup().warning("Journey", { message: "Retry", data }, "both");
     const entry = send.mock.calls[0]![0];
-    expect(console.warn).toHaveBeenCalledWith(
-      "%c%s%c\n%s\n%o",
+    expect(console.groupCollapsed).toHaveBeenCalledWith(
+      "%c%s%c\n%c%s: %s%c",
       expect.any(String),
-      `[${entry.timestamp}] :: [WARNING] :: [Journey]`,
+      `[${entry.timestamp}] :: [WARNING]`,
       "",
+      "color: #fff01f",
+      "[Journey]",
       "Retry",
-      data,
+      "",
     );
+    expect(console.table).toHaveBeenCalledExactlyOnceWith(data);
     expect(entry.data).toBe(data);
   });
 
@@ -139,7 +164,7 @@ describe("WorkshopLogger", () => {
       { message: "Local" },
       "console",
     );
-    expect(console.info).toHaveBeenCalledOnce();
+    expect(console.log).toHaveBeenCalledOnce();
     expect(send).not.toHaveBeenCalled();
   });
 
@@ -151,7 +176,7 @@ describe("WorkshopLogger", () => {
           message: "Hidden",
         }),
       ).toBeUndefined();
-      expect(console.info).not.toHaveBeenCalled();
+      expect(console.log).not.toHaveBeenCalled();
       expect(send).not.toHaveBeenCalled();
     },
   );
@@ -172,7 +197,7 @@ describe("WorkshopLogger", () => {
     await setup({ minLevel: "error", target: "both" }).warning("Journey", {
       message: "Hidden",
     });
-    expect(console.warn).not.toHaveBeenCalled();
+    expect(console.log).not.toHaveBeenCalled();
     expect(send).not.toHaveBeenCalled();
   });
 
@@ -180,7 +205,7 @@ describe("WorkshopLogger", () => {
     await expect(
       setup().error("  ", { message: "Failure" }, "both"),
     ).rejects.toThrow("origin");
-    expect(console.error).not.toHaveBeenCalled();
+    expect(console.log).not.toHaveBeenCalled();
     expect(send).not.toHaveBeenCalled();
   });
 
@@ -189,7 +214,7 @@ describe("WorkshopLogger", () => {
     await expect(
       setup().error("Journey", { message: "Failure" }, "both"),
     ).rejects.toThrow("Offline");
-    expect(console.error).toHaveBeenCalledOnce();
+    expect(console.log).toHaveBeenCalledOnce();
     expect(send).toHaveBeenCalledOnce();
   });
 

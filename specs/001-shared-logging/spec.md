@@ -14,10 +14,13 @@ server retention, batching, retries, and production redaction policies are outsi
 ## Requirements
 
 - FR-001: Accept Info, Warning, Error, an origin class name, and message and/or data.
-- FR-002: Console output uses `[Timestamp] :: [Log Level] :: [Class Name]`,
-  followed by message and data on separate lines when provided. Use ISO UTC timestamps.
-- FR-003: Give each severity a distinct color and corresponding info/warn/error method;
-  preserve inspectable objects and offer a color opt-out.
+- FR-002: Console output places `[HH:MM:SS] :: [Log Level]` on the first line and
+  `[Class Name]: Message` on the second line. Timestamps use UTC. When data exists,
+  use that summary as a collapsed group label and display the original data through
+  `console.table`.
+- FR-003: Give only the timestamp/severity line a distinct synthwave neon color and
+  layered glow. Render the origin/message line in the same severity color without
+  the glow; preserve inspectable data and offer a color opt-out.
 - FR-004: Select console, backend, or both per application or per call; default to console.
 - FR-005: Mock backend acknowledgement is asynchronous, explicitly mocked, and makes
   no network request or persistence claim. Allow replacement via dependency injection.
@@ -27,8 +30,10 @@ server retention, batching, retries, and production redaction policies are outsi
 
 ## Acceptance scenarios
 
-- AC-001 (FR-001–003): Each severity prints a colored header, multiline message, and
-  original object through the matching inspector method. Format tokens remain literal.
+- AC-001 (FR-001–003): Each severity prints `[HH:MM:SS] :: [Log Level]` with a
+  neon glow, then `[Class Name]: Message` in the same color without the glow.
+  Entries with data use a collapsed group and pass the original value to
+  `console.table`; message-only entries use `console.log`. Format tokens remain literal.
 - AC-002 (FR-001–003): Message-only and data-only events work; falsy data is preserved;
   colors can be disabled; an empty origin rejects the call.
 - AC-003 (FR-004–005): Backend-only emits no console output and returns a mock receipt;
@@ -38,7 +43,8 @@ server retention, batching, retries, and production redaction policies are outsi
 
 ## Assumptions and boundaries
 
-Info, Warning, Error are the initial severities; console colors apply to the header.
+Info, Warning, Error are the initial severities. The second line uses a separate
+color-only style, while the browser controls native table rendering.
 Browser inspector CSS formatting is the target; terminal ANSI output is out of scope.
 The backend contract is local only and will require a separate spec when an endpoint
 exists. A mock receipt is not evidence of external integration. Data is passed by

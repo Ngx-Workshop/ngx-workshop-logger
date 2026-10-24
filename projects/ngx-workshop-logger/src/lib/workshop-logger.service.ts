@@ -12,10 +12,10 @@ import type {
 } from "./logger.types";
 
 const PRIORITY: Record<LogLevel, number> = { info: 0, warning: 1, error: 2 };
-const COLORS: Record<LogLevel, string> = {
-  info: "#0284c7",
-  warning: "#b45309",
-  error: "#dc2626",
+const CONSOLE_COLORS: Record<LogLevel, string> = {
+  info: "#00f5ff",
+  warning: "#fff01f",
+  error: "#ff2a6d",
 };
 
 @Injectable({ providedIn: "root" })
@@ -30,12 +30,12 @@ export class WorkshopLogger {
     level: LogLevel,
     origin: string,
     content: LogContent,
-    target: LogTarget = this.config.target,
+    target: LogTarget = this.config.target
   ): Promise<LogReceipt | undefined> {
     if (!origin.trim()) throw new Error("A log origin class name is required.");
     if (PRIORITY[level] < PRIORITY[this.config.minLevel]) return;
     const entry: LogEntry = {
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString().slice(11, 19),
       level,
       origin,
       ...("message" in content ? { message: content.message } : {}),
@@ -60,23 +60,37 @@ export class WorkshopLogger {
   }
 
   private writeConsole(entry: LogEntry): void {
-    const header = `[${
-      entry.timestamp
-    }] :: [${entry.level.toUpperCase()}] :: [${entry.origin}]`;
+    const heading = `[${entry.level.toUpperCase()}] || [${entry.timestamp}]`;
+    const context = `[${entry.origin}]`;
     // %s keeps consumer text literal, even when it contains console format tokens.
-    let format = this.config.color ? "%c%s%c" : "%s";
+    let format = this.config.color ? "%c%s%c\n%c%s" : "%s\n%s";
+    const color = CONSOLE_COLORS[entry.level];
     const args: unknown[] = this.config.color
-      ? [`color: ${COLORS[entry.level]}; font-weight: bold`, header, ""]
-      : [header];
+      ? [
+          `color: ${color}; font-size: 10px; font-weight: normal; padding: 4px 8px; text-shadow: 0 0 4px ${color}, 0 0 8px ${color}`,
+          heading,
+          "",
+          `color: ${color}; font-size: 10px; font-weight: normal; padding: 0 4px 0 8px;`,
+          context,
+        ]
+      : [heading, context];
     if (entry.message !== undefined) {
-      format += "\n%s";
+      format += ": %s";
       args.push(entry.message);
     }
-    if ("data" in entry) {
-      format += "\n%o";
-      args.push(entry.data);
+    if (this.config.color) {
+      format += "%c";
+      args.push("");
     }
-    const method = entry.level === "warning" ? "warn" : entry.level;
-    console[method](format, ...args);
+    if ("data" in entry) {
+      console.groupCollapsed(format, ...args);
+      try {
+        console.table(entry.data);
+      } finally {
+        console.groupEnd();
+      }
+      return;
+    }
+    console.log(format, ...args);
   }
 }

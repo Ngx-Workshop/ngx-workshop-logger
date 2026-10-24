@@ -7,19 +7,27 @@ Spec: [spec.md](spec.md) · Plan: [plan.md](plan.md) · Tasks: [tasks.md](tasks.
 ## Delivered
 
 Replaced the starter component with the shared WorkshopLogger API, console and
-mock backend routing, colored severity headers, minimum severity configuration,
-transport injection, and a public-package demo. Added the self-contained Markdown
-Spec Kit workflow, constitution, templates, context docs, and feature artifacts.
+mock backend routing, synthwave neon severity headers, minimum severity configuration,
+transport injection, and a public-package demo. Message-only console entries use
+`console.log`; entries with data use a synthwave-styled collapsed group and pass the
+original payload to `console.table`. The first line contains UTC timestamp/severity
+and receives the neon glow; the second contains origin/message in the same severity
+color without the glow. Added the self-contained Markdown Spec Kit workflow,
+constitution, templates, context docs, and feature artifacts.
 
 ## Verification
 
 - `npm run check`: PASS; 23 tests passed, production Angular library and demo built.
-- AC-001/002: PASS in unit tests for formatted console arguments, severities,
-  color styles, literal text, structured/falsy/circular data, and invalid origins.
+- AC-001/002: PASS in unit tests for styled collapsed groups, original-value
+  `console.table` calls, message-only `console.log` routing, first-line-only glow,
+  same-color second line, the requested two-line UTC timestamp/severity and
+  origin/message format, literal text, structured/falsy/circular data, and invalid
+  origins.
 - AC-003/004: PASS in unit tests for isolated/both targets, shared timestamp/data,
   configuration, filters, asynchronous mock acknowledgement, and rejection propagation.
 - AC-005: PASS; `npm run pack` generated `tmdjr-ngx-workshop-logger-0.0.1.tgz`
-  with compiled code, type declarations, package manifest, README, and license.
+  with compiled code, type declarations, package manifest, README, and license
+  (SHA-1 `8a5432d651d8b1d245cad7f9b830c29e77eed64b`).
 - `git diff --check`: PASS.
 
 Tests verify console formatting arguments under jsdom. Actual browser inspector

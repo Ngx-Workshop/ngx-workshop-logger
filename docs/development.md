@@ -19,12 +19,16 @@ is required by Angular; workflows use the current Node 22 release.
 ## Logger verification
 
 `projects/ngx-workshop-logger/src/lib/workshop-logger.service.spec.ts` checks all
-three severities, exact console arguments, literal format tokens, data-only/falsy
-payloads, circular objects, plain output, DI defaults, target overrides, threshold
-filtering, mock acknowledgement, and backend failure propagation. These are local
-unit checks; they do not verify an external backend or actual inspector rendering.
+three severities, exact first-line synthwave glow and second-line color-only style,
+grouped `console.table` data, the two-line UTC timestamp/severity and origin/message
+format, literal format tokens, data-only/falsy payloads, circular objects, plain
+output, DI defaults, target overrides, threshold filtering, mock acknowledgement,
+and backend failure propagation. These are local unit checks; they do not verify
+an external backend or actual inspector rendering.
 
 To inspect manually, run `npm start`, open the browser inspector console, and use
 each severity button. Select Mock backend to see an explicit mock acknowledgement;
 select Both to see console output and acknowledgement. Expand the console object
-and verify header colors. No network request is expected.
+group and verify that only its first line glows while the second line and native
+line shares its color without the glow. The native table uses default rendering.
+No network request is expected.
