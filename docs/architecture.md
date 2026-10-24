@@ -7,9 +7,11 @@ The demo imports the built package from dist to verify the public boundary.
 `src/lib/logger.types.ts` defines the event and transport contracts.
 `logger.providers.ts` owns application configuration and injectable mock backend.
 `logger.console.ts` owns the internal declarative banner/log theme, CSS generation,
-and safe composable console fragments. It is intentionally not part of the public
-API. `workshop-logger.service.ts` creates one timestamped event, filters severity,
-then routes to the console, backend, or both.
+and safe composable console fragments. Heading, bracket, origin, and message styles
+are independent theme blocks with validated font, spacing, decoration, and transform
+properties. It is intentionally not part of the public API.
+`workshop-logger.service.ts` creates one timestamped event, filters severity, then
+routes to the console, backend, or both.
 
 Severity and UTC `HH:MM:SS` share the first line; origin and message share the second
 line. The first line receives the synthwave neon glow. On the second line, separate

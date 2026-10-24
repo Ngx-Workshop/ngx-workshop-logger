@@ -28,9 +28,12 @@ unit checks; they do not verify an external backend or actual inspector renderin
 
 Console presentation is composed in
 `projects/ngx-workshop-logger/src/lib/logger.console.ts`. Edit `CONSOLE_THEME` to
-change banner visibility, banner styles, severity colors, typography, spacing, or
-glow radii. Edit `createLogOutput` to change line composition. Keep consumer values
-as `%s` arguments rather than interpolating them into format strings.
+change banner visibility/styles or the log theme. Heading, brackets, origin, and
+message each have an independent `style` object supporting color, font family,
+font size, font style, font weight, letter spacing, line height, padding, text
+decoration, text shadow, and text transform. Edit `createLogOutput` to change line
+composition. Keep consumer values as `%s` arguments rather than interpolating them
+into format strings.
 
 To inspect manually, run `npm start`, open the browser inspector console, and use
 each severity button. Select Mock backend to see an explicit mock acknowledgement;

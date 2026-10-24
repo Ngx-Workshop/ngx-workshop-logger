@@ -6,8 +6,9 @@ peer dependencies, scripts, publication workflows, and dist-based demo imports.
 
 - `logger.types.ts`: severity, target, content union, event, receipt, transport/config contracts (FR-001/004/005).
 - `logger.providers.ts`: defaults, configuration helper, injectable mock transport (FR-004/005).
-- `logger.console.ts`: internal declarative banner/log theme, CSS generation, and
-  composable safe format fragments; not exported through the public API.
+- `logger.console.ts`: internal declarative banner/log theme with independent
+  heading, bracket, origin, and message font styles; CSS generation and composable
+  safe format fragments; not exported through the public API.
 - `workshop-logger.service.ts`: UTC time formatting, first-line synthwave glow,
   separately colored brackets/origin/message, grouped `console.table` data,
   threshold, dispatch, severity helpers (FR-001–006).

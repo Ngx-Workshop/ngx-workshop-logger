@@ -13,9 +13,11 @@ transport injection, and a public-package demo. Message-only console entries use
 original payload to `console.table`. The first line contains severity/UTC timestamp
 and receives the neon glow. On the second line, the brackets use the severity color,
 the origin is pink, and the message is purple. Banner and log presentation now come
-from an internal declarative theme and composable safe console fragments; the public
-configuration API is unchanged. Added the self-contained Markdown Spec Kit workflow,
-constitution, templates, context docs, and feature artifacts.
+from an internal declarative theme and composable safe console fragments. Heading,
+brackets, origin, and message have independent validated style blocks; the origin
+defaults to bold while the message defaults to normal weight. The public configuration
+API is unchanged. Added the self-contained Markdown Spec Kit workflow, constitution,
+templates, context docs, and feature artifacts.
 
 ## Verification
 
@@ -29,7 +31,7 @@ constitution, templates, context docs, and feature artifacts.
   configuration, filters, asynchronous mock acknowledgement, and rejection propagation.
 - AC-005: PASS; `npm run pack` generated `tmdjr-ngx-workshop-logger-0.2.0.tgz`
   with compiled code, type declarations, package manifest, README, and license
-  (SHA-1 `6b5703ccb7c8f75c1e3a9d0791923e34e0c3a61a`).
+  (SHA-1 `7a0f50906b0b00f3b92f57f57c1a4b02c2678842`).
 - `git diff --check`: PASS.
 
 Tests verify console formatting arguments under jsdom. Actual browser inspector

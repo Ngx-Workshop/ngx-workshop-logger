@@ -20,8 +20,9 @@ server retention, batching, retries, and production redaction policies are outsi
   `console.table`.
 - FR-003: Give only the timestamp/severity line a distinct synthwave neon color and
   layered glow. On the second line, color the brackets with the severity color,
-  the origin `#ff2d95`, and the message `#c084fc`; preserve inspectable data and
-  offer a color opt-out.
+  the origin `#ff2d95`, and the message `#c084fc`. Allow internal theme configuration
+  of each part's font properties independently; preserve inspectable data and offer
+  a color opt-out.
 - FR-004: Select console, backend, or both per application or per call; default to console.
 - FR-005: Mock backend acknowledgement is asynchronous, explicitly mocked, and makes
   no network request or persistence claim. Allow replacement via dependency injection.
@@ -33,9 +34,9 @@ server retention, batching, retries, and production redaction policies are outsi
 
 - AC-001 (FR-001–003): Each severity prints `[Log Level] || [HH:MM:SS]` with a
   neon glow, then `[Class Name]: Message` with severity-colored brackets, a pink
-  origin, and a purple message. Entries with data use a collapsed group and pass
-  the original value to `console.table`; message-only entries use `console.log`.
-  Format tokens remain literal.
+  bold origin, and a purple normal-weight message. Entries with data use a collapsed
+  group and pass the original value to `console.table`; message-only entries use
+  `console.log`. Format tokens remain literal.
 - AC-002 (FR-001–003): Message-only and data-only events work; falsy data is preserved;
   colors can be disabled; an empty origin rejects the call.
 - AC-003 (FR-004–005): Backend-only emits no console output and returns a mock receipt;

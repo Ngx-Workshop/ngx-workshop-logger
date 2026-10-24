@@ -28,3 +28,6 @@
 - [x] T013: Extract banner and log presentation into an internal declarative theme,
   CSS generator, and composable safe fragments without changing the public API;
   update tests and documentation; depends on T012.
+- [x] T014: Split log typography into independently configurable heading, bracket,
+  origin, and message style blocks; default the origin to bold and message to
+  normal weight; update tests and documentation (FR-003, AC-001); depends on T013.

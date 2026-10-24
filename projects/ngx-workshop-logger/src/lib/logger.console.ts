@@ -1,15 +1,18 @@
 import type { LogEntry, LogLevel } from "./logger.types";
 
 interface TextStyle {
-  readonly color: string;
+  readonly color?: string;
   readonly fontFamily?: string;
   readonly fontSize?: string;
   readonly fontStyle?: string;
   readonly fontWeight?: string;
+  readonly letterSpacing?: string;
   readonly lineHeight?: string;
   readonly padding?: string;
   readonly paddingLeft?: string;
+  readonly textDecoration?: string;
   readonly textShadow?: string;
+  readonly textTransform?: string;
 }
 
 interface ConsoleFragment {
@@ -85,27 +88,53 @@ const CONSOLE_THEME = {
       warning: "#fff01f",
       error: "#ff2a6d",
     } satisfies Record<LogLevel, string>,
-    originColor: "#ff2d95",
-    messageColor: "#c084fc",
-    fontSize: "10px",
-    fontWeight: "normal",
-    headingPadding: "4px 8px",
-    originPaddingLeft: "8px",
-    glowRadii: [4, 8],
+    heading: {
+      style: {
+        fontSize: "10px",
+        fontWeight: "normal",
+        padding: "4px 8px",
+      } satisfies TextStyle,
+      glowRadii: [4, 8],
+    },
+    brackets: {
+      style: {
+        fontSize: "10px",
+        fontWeight: "bold",
+      } satisfies TextStyle,
+      openingPaddingLeft: "8px",
+    },
+    origin: {
+      style: {
+        color: "#ff2d95",
+        fontSize: "10px",
+        fontWeight: "normal",
+      } satisfies TextStyle,
+    },
+    message: {
+      style: {
+        color: "#c084fc",
+        fontSize: "10px",
+        fontWeight: "bold",
+        fontStyle: "italic",
+      } satisfies TextStyle,
+    },
   },
 } as const;
 
 function toCss(style: TextStyle): string {
   return [
-    `color: ${style.color}`,
+    style.color && `color: ${style.color}`,
     style.fontFamily && `font-family: ${style.fontFamily}`,
     style.fontSize && `font-size: ${style.fontSize}`,
     style.fontStyle && `font-style: ${style.fontStyle}`,
     style.fontWeight && `font-weight: ${style.fontWeight}`,
+    style.letterSpacing && `letter-spacing: ${style.letterSpacing}`,
     style.lineHeight && `line-height: ${style.lineHeight}`,
     style.padding && `padding: ${style.padding}`,
     style.paddingLeft && `padding-left: ${style.paddingLeft}`,
+    style.textDecoration && `text-decoration: ${style.textDecoration}`,
     style.textShadow && `text-shadow: ${style.textShadow}`,
+    style.textTransform && `text-transform: ${style.textTransform}`,
   ]
     .filter((declaration): declaration is string => Boolean(declaration))
     .join("; ")
@@ -131,14 +160,6 @@ function compose(...fragments: readonly ConsoleFragment[]): ConsoleOutput {
   };
 }
 
-function logTextStyle(color: string): TextStyle {
-  return {
-    color,
-    fontSize: CONSOLE_THEME.log.fontSize,
-    fontWeight: CONSOLE_THEME.log.fontWeight,
-  };
-}
-
 export function createBannerOutput(): ConsoleOutput | undefined {
   if (!CONSOLE_THEME.banner.enabled) return;
   return {
@@ -149,7 +170,7 @@ export function createBannerOutput(): ConsoleOutput | undefined {
 
 export function createLogOutput(
   entry: LogEntry,
-  colorEnabled: boolean,
+  colorEnabled: boolean
 ): ConsoleOutput {
   const heading = `[${entry.level.toUpperCase()}] || [${entry.timestamp}]`;
   const message =
@@ -158,10 +179,7 @@ export function createLogOutput(
       : [
           literal(": "),
           colorEnabled
-            ? styledText(
-                entry.message,
-                logTextStyle(CONSOLE_THEME.log.messageColor),
-              )
+            ? styledText(entry.message, CONSOLE_THEME.log.message.style)
             : text(entry.message),
         ];
 
@@ -170,28 +188,32 @@ export function createLogOutput(
       text(heading),
       literal("\n"),
       text(`[${entry.origin}]`),
-      ...message,
+      ...message
     );
   }
 
   const levelColor = CONSOLE_THEME.log.levelColors[entry.level];
-  const glow = CONSOLE_THEME.log.glowRadii
+  const glow = CONSOLE_THEME.log.heading.glowRadii
     .map((radius) => `0 0 ${radius}px ${levelColor}`)
     .join(", ");
 
   return compose(
     styledText(heading, {
-      ...logTextStyle(levelColor),
-      padding: CONSOLE_THEME.log.headingPadding,
+      color: levelColor,
+      ...CONSOLE_THEME.log.heading.style,
       textShadow: glow,
     }),
     literal("\n"),
     styledText("[", {
-      ...logTextStyle(levelColor),
-      paddingLeft: CONSOLE_THEME.log.originPaddingLeft,
+      color: levelColor,
+      ...CONSOLE_THEME.log.brackets.style,
+      paddingLeft: CONSOLE_THEME.log.brackets.openingPaddingLeft,
     }),
-    styledText(entry.origin, logTextStyle(CONSOLE_THEME.log.originColor)),
-    styledText("]", logTextStyle(levelColor)),
-    ...message,
+    styledText(entry.origin, CONSOLE_THEME.log.origin.style),
+    styledText("]", {
+      color: levelColor,
+      ...CONSOLE_THEME.log.brackets.style,
+    }),
+    ...message
   );
 }
