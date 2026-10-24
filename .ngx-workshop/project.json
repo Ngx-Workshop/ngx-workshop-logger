@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "kind": "library",
+  "name": "ngx-workshop-logger",
+  "org": "Ngx-Workshop",
+  "seed": "seed-ngx-library",
+  "port": 4200,
+  "npmPackage": "@tmdjr/ngx-workshop-logger"
+}

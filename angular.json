@@ -1,0 +1,112 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm",
+    "analytics": false
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "ngx-workshop-logger": {
+      "projectType": "library",
+      "root": "projects/ngx-workshop-logger",
+      "sourceRoot": "projects/ngx-workshop-logger/src",
+      "prefix": "ngx",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngx-workshop-logger/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngx-workshop-logger/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production",
+          "options": {
+            "project": "projects/ngx-workshop-logger/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/ngx-workshop-logger/tsconfig.spec.json",
+            "buildTarget": "ngx-workshop-logger-demo:build:development"
+          }
+        }
+      }
+    },
+    "ngx-workshop-logger-demo": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "inlineTemplate": true,
+          "inlineStyle": true,
+          "style": "scss"
+        }
+      },
+      "root": "projects/ngx-workshop-logger-demo",
+      "sourceRoot": "projects/ngx-workshop-logger-demo/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/ngx-workshop-logger-demo/src/main.ts",
+            "tsConfig": "projects/ngx-workshop-logger-demo/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/ngx-workshop-logger-demo/public"
+              }
+            ],
+            "styles": [
+              "projects/ngx-workshop-logger-demo/src/styles.scss"
+            ],
+            "index": "projects/ngx-workshop-logger-demo/src/index.html"
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "ngx-workshop-logger-demo:build:production"
+            },
+            "development": {
+              "buildTarget": "ngx-workshop-logger-demo:build:development"
+            }
+          },
+          "defaultConfiguration": "development",
+          "options": {
+            "port": 4200
+          }
+        }
+      }
+    }
+  }
+}
