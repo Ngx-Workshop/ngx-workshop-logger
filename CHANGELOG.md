@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/Ngx-Workshop/ngx-workshop-logger/compare/v0.3.0...v0.4.0) (2026-10-24)
+
+
+### Features
+
+* Failing tests ([91bf4fc](https://github.com/Ngx-Workshop/ngx-workshop-logger/commit/91bf4fc5752bae1fd6e65959d9ac0bc4cc04dbc9))
+
 ## [0.3.0](https://github.com/Ngx-Workshop/ngx-workshop-logger/compare/v0.2.0...v0.3.0) (2026-10-24)
 
 
