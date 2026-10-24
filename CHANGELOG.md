@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/Ngx-Workshop/ngx-workshop-logger/compare/v0.1.0...v0.2.0) (2026-10-24)
+
+
+### Features
+
+* Downgrading Angular ([6d0f444](https://github.com/Ngx-Workshop/ngx-workshop-logger/commit/6d0f444be539a5107760c043d67573ed767280e7))
+
 ## [0.1.0](https://github.com/Ngx-Workshop/ngx-workshop-logger/compare/v0.0.2...v0.1.0) (2026-10-24)
 
 
