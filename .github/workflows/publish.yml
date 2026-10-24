@@ -1,23 +1,78 @@
-name: Publish ngx-workshop-logger
+name: Release and publish ngx-workshop-logger
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Existing release tag to retry publishing (for example v0.0.2)'
+        required: true
+        type: string
 permissions:
   contents: read
 concurrency:
   group: ngx-workshop-logger-npm-publish
   cancel-in-progress: false
 jobs:
+  release:
+    if: github.event_name == 'push' && !startsWith(github.event.repository.name, 'seed-')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      actions: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+      # GITHUB_TOKEN-created PRs do not trigger pull_request workflows.
+      # Explicit dispatch runs CI against each generated release branch.
+      - name: Validate release PRs
+        if: steps.release.outputs.prs_created == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_PRS: ${{ steps.release.outputs.prs }}
+        run: |
+          printf '%s' "$RELEASE_PRS" | jq -r '.[].headBranchName' | while IFS= read -r branch; do
+            gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref "$branch"
+          done
   publish:
-    if: github.ref == 'refs/heads/main' && !startsWith(github.event.repository.name, 'seed-')
+    needs: release
+    if: >-
+      always() && !cancelled() && github.ref == 'refs/heads/main' &&
+      !startsWith(github.event.repository.name, 'seed-') &&
+      (github.event_name == 'workflow_dispatch' || needs.release.outputs.release_created == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: read
       id-token: write
+    env:
+      RELEASE_TAG: ${{ inputs.release_tag || needs.release.outputs.tag_name }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ env.RELEASE_TAG }}
+          fetch-depth: 0
           persist-credentials: false
+      - name: Verify release tag and package version
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+          const version = JSON.parse(readFileSync('projects/ngx-workshop-logger/package.json', 'utf8')).version;
+          const tag = process.env.RELEASE_TAG;
+          if (tag !== `v${version}`) throw new Error('Release tag must match the library version');
+          execFileSync('git', ['show-ref', '--verify', `refs/tags/${tag}`]);
+          execFileSync('git', ['merge-base', '--is-ancestor', `refs/tags/${tag}`, 'origin/main']);
+          NODE
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '22'

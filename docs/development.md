@@ -32,3 +32,10 @@ select Both to see console output and acknowledgement. Expand the console object
 group and verify that only its first line glows while the second line and native
 line shares its color without the glow. The native table uses default rendering.
 No network request is expected.
+
+## Release commits
+
+Use Conventional Commits for changes intended for npm: `fix:` for patches,
+`feat:` for features, and `!` or a `BREAKING CHANGE:` footer for breaking changes.
+Pushes to main maintain an automatic release PR; merging it publishes the tagged
+library after validation. See [publishing](publishing.md) for setup and retries.
