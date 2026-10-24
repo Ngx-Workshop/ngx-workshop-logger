@@ -18,7 +18,9 @@ describe("WorkshopLogger", () => {
         { provide: LOG_BACKEND_TRANSPORT, useValue: { send } },
       ],
     });
-    return TestBed.inject(WorkshopLogger);
+    const logger = TestBed.inject(WorkshopLogger);
+    vi.mocked(console.log).mockClear();
+    return logger;
   }
 
   beforeEach(() => {
@@ -35,6 +37,22 @@ describe("WorkshopLogger", () => {
     vi.restoreAllMocks();
   });
 
+  it("prints the workshop banner when constructed", () => {
+    TestBed.configureTestingModule({});
+    TestBed.inject(WorkshopLogger);
+
+    expect(console.log).toHaveBeenCalledOnce();
+    const [banner, ...styles] = vi.mocked(console.log).mock.calls[0]!;
+    expect(banner).toEqual(expect.stringContaining("[ Made with <3 ]"));
+    expect(styles).toEqual([
+      "color: #22d3ee; font-family: monospace; font-weight: bold; line-height: 1.2; text-shadow: 0 0 8px #22d3ee80;",
+      "color: #c084fc; font-family: monospace; font-weight: bold; line-height: 1.2; text-shadow: 0 0 8px #c084fc80;",
+      "color: #22d3ee; font-family: monospace; font-weight: bold; line-height: 1.2; text-shadow: 0 0 8px #22d3ee80;",
+      "color: #c084fc; font-family: monospace; font-weight: bold; line-height: 1.2; text-shadow: 0 0 8px #c084fc80;",
+      "color: #ff2d95; font-family: monospace; font-style: italic; line-height: 1.2; text-shadow: 0 0 8px #ff2d9580;",
+    ]);
+  });
+
   it.each([
     ["info", "#00f5ff"],
     ["warning", "#fff01f"],
@@ -49,10 +67,10 @@ describe("WorkshopLogger", () => {
       await setup().log(level, "Journey%c", { message: "Loaded %c %s", data });
       expect(console.groupCollapsed).toHaveBeenCalledWith(
         "%c%s%c\n%c%s: %s%c",
-        `color: ${color}; font-size: 12px; font-weight: normal; padding: 4px 8px; text-shadow: 0 0 4px ${color}, 0 0 8px ${color}`,
-        `[12:00:00] :: [${level.toUpperCase()}]`,
+        `color: ${color}; font-size: 10px; font-weight: normal; padding: 4px 8px; text-shadow: 0 0 4px ${color}, 0 0 8px ${color}`,
+        `[${level.toUpperCase()}] || [12:00:00]`,
         "",
-        `color: ${color}`,
+        `color: ${color}; font-size: 10px; font-weight: normal; padding: 0 4px 0 8px;`,
         "[Journey%c]",
         "Loaded %c %s",
         "",
@@ -69,7 +87,9 @@ describe("WorkshopLogger", () => {
 
   it("uses defaults without registering configuration providers", async () => {
     TestBed.configureTestingModule({});
-    await TestBed.inject(WorkshopLogger).info("Journey", {
+    const logger = TestBed.inject(WorkshopLogger);
+    vi.mocked(console.log).mockClear();
+    await logger.info("Journey", {
       message: "Started",
     });
     expect(console.log).toHaveBeenCalledWith(
@@ -77,7 +97,7 @@ describe("WorkshopLogger", () => {
       expect.any(String),
       expect.any(String),
       "",
-      "color: #00f5ff",
+      "color: #00f5ff; font-size: 10px; font-weight: normal; padding: 0 4px 0 8px;",
       "[Journey]",
       "Started",
       "",
@@ -91,7 +111,7 @@ describe("WorkshopLogger", () => {
     await setup({ color: false }).warning("Journey", { message: "Retry" });
     expect(console.log).toHaveBeenCalledWith(
       "%s\n%s: %s",
-      expect.stringMatching(/^\[\d{2}:\d{2}:\d{2}\] :: \[WARNING\]$/),
+      expect.stringMatching(/^\[WARNING\] \|\| \[\d{2}:\d{2}:\d{2}\]$/),
       "[Journey]",
       "Retry",
     );
@@ -104,9 +124,9 @@ describe("WorkshopLogger", () => {
       expect(console.groupCollapsed).toHaveBeenCalledWith(
         "%c%s%c\n%c%s%c",
         expect.any(String),
-        expect.stringMatching(/^\[\d{2}:\d{2}:\d{2}\] :: \[INFO\]$/),
+        expect.stringMatching(/^\[INFO\] \|\| \[\d{2}:\d{2}:\d{2}\]$/),
         "",
-        "color: #00f5ff",
+        "color: #00f5ff; font-size: 10px; font-weight: normal; padding: 0 4px 0 8px;",
         "[Journey]",
         "",
       );
@@ -147,9 +167,9 @@ describe("WorkshopLogger", () => {
     expect(console.groupCollapsed).toHaveBeenCalledWith(
       "%c%s%c\n%c%s: %s%c",
       expect.any(String),
-      `[${entry.timestamp}] :: [WARNING]`,
+      `[WARNING] || [${entry.timestamp}]`,
       "",
-      "color: #fff01f",
+      "color: #fff01f; font-size: 10px; font-weight: normal; padding: 0 4px 0 8px;",
       "[Journey]",
       "Retry",
       "",
