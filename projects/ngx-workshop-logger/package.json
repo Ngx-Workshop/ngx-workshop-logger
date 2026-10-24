@@ -1,6 +1,6 @@
 {
   "name": "@tmdjr/ngx-workshop-logger",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Shared Angular logging for Ngx-Workshop shells and microfrontends",
   "license": "Apache-2.0",
   "peerDependencies": {
