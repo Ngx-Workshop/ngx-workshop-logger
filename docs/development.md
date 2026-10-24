@@ -1,6 +1,6 @@
 # Development
 
-npm ci installs the locked Angular 21.2 toolchain. npm start builds the library
+npm ci installs the locked Angular 21.1.0 toolchain. npm start builds the library
 and serves the demo. The demo resolves the compiled package from dist/, so keep
 npm run watch running in a second terminal while editing library code.
 
@@ -39,3 +39,11 @@ Use Conventional Commits for changes intended for npm: `fix:` for patches,
 `feat:` for features, and `!` or a `BREAKING CHANGE:` footer for breaking changes.
 Pushes to main maintain an automatic release PR; merging it publishes the tagged
 library after validation. See [publishing](publishing.md) for setup and retries.
+
+## Angular compatibility
+
+Build and test with Angular 21.1.0, the minimum supported consumer version.
+Keep core/common peers at `^21.1.0` and the workspace Angular compiler/runtime
+pinned to 21.1.0 so a toolchain update does not silently raise the consumer floor.
+The library remains partial-compiled. A wider peer range alone does not establish
+compatibility when compiling against a newer Angular version.

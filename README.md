@@ -1,6 +1,6 @@
 # @tmdjr/ngx-workshop-logger
 
-Shared Angular 21 logging for shells and microfrontends. Requires Angular core/common ^21.2.25.
+Shared Angular 21 logging for shells and microfrontends. Requires Angular core/common ^21.1.0.
 
 ```ts
 import { inject } from '@angular/core';
